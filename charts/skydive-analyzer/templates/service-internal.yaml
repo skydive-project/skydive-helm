@@ -10,10 +10,10 @@ metadata:
 
 spec:
   ports:
-  - port: {{ .Values.etcd.port }}
-    name: etcd
-  - port: {{ .Values.storage.elasticsearch.port }}
-    name: elasticsearch
+    - port: {{ .Values.etcd.port }}
+      name: etcd
+    - port: {{ .Values.persistence.storage.elasticsearch.port }}
+      name: elasticsearch
   selector:
     app: {{ template "fullname" . }}
     tier: analyzer

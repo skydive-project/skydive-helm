@@ -3,7 +3,7 @@
 ###############################################################################
 
 ##################
-## Image variables
+# Image variables
 arch:
   amd64: "2 - No preference"
   ppc64le: "2 - No preference"
@@ -11,12 +11,12 @@ arch:
 
 image:
   repository: skydive/skydive
-  tag: "0.24.0"
+  tag: "0.26.0"
   secretName: ""
   imagePullPolicy: IfNotPresent
 
 ##################
-## Resources
+# Resources
 resources:
   limits:
     cpu: 2000m
@@ -26,50 +26,15 @@ resources:
     memory: 512Mi
 
 ##################
-## Service variables
+# Service variables
 service:
-  name: skydive
   port: 8082
-  type: NodePort
 
-etcd:
-  port: 12379
-
+##################
+# Analyzer
 agent:
   topology:
     probes: "ovsdb docker runc"
 
 ## env variables
 env: []
-
-###################
-## Elastic search image 
-elasticsearch:
-  image:
-    repository: "elastic/elasticsearch"
-    tag: "5.5.1"
-
-##################
-## Data / Storage
-##
-## - Persistence disables by default
-persistence:
-  enabled: false
-  useDynamicProvisioning: false
-
-dataVolume:
-  name: "datavolume"
-  existingClaimName: ""
-  storageClassName: ""
-  size: 10Gi
-
-storage:
-  flows:
-    indicesToKeep: 10
-    indexEntriesLimit: 10000
-  topology:
-    indicesToKeep: 10
-    indexEntriesLimit: 10000
-  elasticsearch:
-    port: 9200
-    host: 127.0.0.1

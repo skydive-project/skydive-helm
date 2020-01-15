@@ -61,8 +61,6 @@ spec:
         env:
         - name: SKYDIVE_UI
           value: '{"theme":"light","k8s_enabled":"true"}'
-        - name: SKYDIVE_ANALYZER_TOPOLOGY_PROBES
-          value: "k8s"
       {{- if .Values.persistence.enabled }}
         - name: SKYDIVE_ANALYZER_FLOW_BACKEND
           value: "elasticsearchflow"
@@ -73,11 +71,11 @@ spec:
         - name: SKYDIVE_STORAGE_ELASTICSEARCHTOPOLOGY_DRIVER
           value: "elasticsearch"
         - name: SKYDIVE_STORAGE_ELASTICSEARCHFLOW_HOST
-          value: {{ .Values.storage.elasticsearch.host }}:{{ .Values.storage.elasticsearch.port }}
+          value: {{ .Values.persistence.storage.elasticsearch.host }}:{{ .Values.persistence.storage.elasticsearch.port }}
         - name: SKYDIVE_STORAGE_ELASTICSEARCHFLOW_INDICES_TO_KEEP
-          value: {{ .Values.storage.flows.indicesToKeep | quote }}
+          value: {{ .Values.persistence.storage.flows.indicesToKeep | quote }}
         - name: SKYDIVE_STORAGE_ELASTICSEARCHFLOW_INDEX_ENTRIES_LIMIT
-          value: {{ .Values.storage.flows.indexEntriesLimit | quote }}
+          value: {{ .Values.persistence.storage.flows.indexEntriesLimit | quote }}
         - name: SKYDIVE_STORAGE_ELASTICSEARCHFLOW_MAXCONNS
           value: "10"
         - name: SKYDIVE_STORAGE_ELASTICSEARCHFLOW_BULK_MAXDOCS
@@ -87,15 +85,15 @@ spec:
         - name: SKYDIVE_STORAGE_ELASTICSEARCHFLOW_RETRY
           value: "5"
         - name: SKYDIVE_STORAGE_ELASTICSEARCHTOPOLOGY_HOST
-          value: {{ .Values.storage.elasticsearch.host }}:{{ .Values.storage.elasticsearch.port }}
+          value: {{ .Values.persistence.storage.elasticsearch.host }}:{{ .Values.persistence.storage.elasticsearch.port }}
         - name: SKYDIVE_STORAGE_ELASTICSEARCHTOPOLOGY_INDICES_TO_KEEP
-          value: {{ .Values.storage.topology.indicesToKeep | quote }}
+          value: {{ .Values.persistence.storage.topology.indicesToKeep | quote }}
         - name: SKYDIVE_STORAGE_ELASTICSEARCHTOPOLOGY_INDEX_ENTRIES_LIMIT
-          value: {{ .Values.storage.topology.indexEntriesLimit | quote }}
+          value: {{ .Values.persistence.storage.topology.indexEntriesLimit | quote }}
         - name: SKYDIVE_STORAGE_ELASTICSEARCHTOPOLOGY_MAXCONNS
           value: "10"
         - name: SKYDIVE_STORAGE_ELASTICSEARCHTOPOLOGY_BULK_MAXDOCS
-          value: "1000"  
+          value: "1000"
         - name: SKYDIVE_STORAGE_ELASTICSEARCHTOPOLOGY_BULK_MAXDELAY
           value: "10"  
         - name: SKYDIVE_STORAGE_ELASTICSEARCHTOPOLOGY_RETRY
@@ -115,20 +113,20 @@ spec:
         volumeMounts:
         - name: ssl
           mountPath: /etc/ssl/certs
-    {{- if .Values.persistence.enabled }}
+    {{- if and .Values.persistence.enabled .Values.elasticsearch.deployment }}
       - name: skydive-elasticsearch
         image: {{ .Values.elasticsearch.image.repository }}:{{ .Values.elasticsearch.image.tag }}
         ports:
-        - containerPort: {{ .Values.storage.elasticsearch.port }}
+        - containerPort: {{ .Values.persistence.storage.elasticsearch.port }}
         readinessProbe:
           httpGet:
-            port: {{ .Values.storage.elasticsearch.port }}
+            port: {{ .Values.persistence.storage.elasticsearch.port }}
             path: /
           initialDelaySeconds: 10
           periodSeconds: 10
         livenessProbe:
           httpGet:
-            port: {{ .Values.storage.elasticsearch.port }}
+            port: {{ .Values.persistence.storage.elasticsearch.port }}
             path: /
           initialDelaySeconds: 20
           periodSeconds: 10
@@ -137,21 +135,24 @@ spec:
         - name: network.host
           value: "0.0.0.0"
         - name: xpack.security.enabled
-          value: "false" 
+          value: "false"
+        {{- if .Values.elasticsearch.env }}
+{{ toYaml .Values.elasticsearch.env | indent 8 }}
+        {{- end }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         volumeMounts:
-        - name: "{{ template "fullname" . }}-{{ .Values.dataVolume.name }}"
+        - name: "{{ template "fullname" . }}-{{ .Values.persistence.dataVolume.name }}"
           mountPath: /usr/share/elasticsearch/data
     {{- end }}      
       volumes:
-    {{- if .Values.persistence.enabled }}  
-      - name: "{{ template "fullname" . }}-{{ .Values.dataVolume.name }}"
+    {{- if and .Values.persistence.enabled .Values.elasticsearch.deployment }}
+      - name: "{{ template "fullname" . }}-{{ .Values.persistence.dataVolume.name }}"
         persistentVolumeClaim:
-        {{- if .Values.dataVolume.existingClaimName }}
-          claimName: {{ .Values.dataVolume.existingClaimName }}
+        {{- if .Values.persistence.dataVolume.existingClaimName }}
+          claimName: {{ .Values.persistence.dataVolume.existingClaimName }}
         {{- else }}
-          claimName: {{ template "fullname" . }}-{{ .Values.dataVolume.name }}
+          claimName: {{ template "fullname" . }}-{{ .Values.persistence.dataVolume.name }}
         {{- end }}
     {{- end }}
       - name: ssl

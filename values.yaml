@@ -8,5 +8,27 @@ deployment:
   agent: true
   analyzer: true
 
+##################
+# Skydive Analyzer Sub-Chart
+skydive-analyzer:
+  ## Override name in subcharts
+  nameOverride: skydive
+  ## env variables
+  env:
+    - name: SKYDIVE_ANALYZER_TOPOLOGY_PROBES
+      value: "k8s"
+
+##################
+# Skydive Agent Sub-Chart
+skydive-agent:
+  ## Override name in subcharts
+  nameOverride: skydive
+  ## env variables
+  env:
+    - name: SKYDIVE_AGENT_TOPOLOGY_PROBES
+      value: "ovsdb docker runc netns"
+    - name: SKYDIVE_AGENT_TOPOLOGY_DOCKER_URL
+      value: "tcp://localhost:2375"
+
 ## env variables
 env: []

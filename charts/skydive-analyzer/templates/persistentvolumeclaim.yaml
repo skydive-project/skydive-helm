@@ -1,8 +1,8 @@
-{{ if and .Values.persistence.enabled (not .Values.dataVolume.existingClaimName) -}}
+{{ if and (not .Values.persistence.dataVolume.existingClaimName) (and .Values.persistence.enabled .Values.elasticsearch.deployment) -}}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ template "fullname" . }}-{{ .Values.dataVolume.name }}
+  name: {{ template "fullname" . }}-{{ .Values.persistence.dataVolume.name }}
   labels:
     app: {{ template "fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
@@ -14,7 +14,7 @@ spec:
   ## default storageClass setup by kube Administrator
   ##
   ## setting storageClassName to nil means use the default storage class
-  storageClassName: {{ default nil .Values.dataVolume.storageClassName | quote }}
+  storageClassName: {{ default nil .Values.persistence.dataVolume.storageClassName | quote }}
   {{- else }}
   ## disable dynamic provisioning
   storageClassName: ""
@@ -24,5 +24,5 @@ spec:
     - "ReadWriteOnce"
   resources:
     requests:
-      storage: {{ .Values.dataVolume.size | quote }}
+      storage: {{ .Values.persistence.dataVolume.size | quote }}
 {{- end }}
