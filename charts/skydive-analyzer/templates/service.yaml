@@ -13,6 +13,12 @@ spec:
   ports:
   - port: {{ .Values.service.port }}
     name: {{ .Values.service.name }}
+    nodePort: {{ .Values.service.nodePort }}
+  {{- if .Values.etcd.expose }}
+  - port: {{ .Values.etcd.port }}
+    name: "{{ template "fullname" . }}-etcd"
+    nodePort: {{ .Values.etcd.nodePort }}
+  {{- end }}
   selector:
     app: {{ template "fullname" . }}
     tier: analyzer
