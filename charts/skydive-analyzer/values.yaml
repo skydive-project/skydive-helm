@@ -87,5 +87,14 @@ elasticsearch:
       value:  skydive-elastic-node
 
 ##################
+# Skydive UI image
+ui:
+  deployment: true
+  image:
+    repository: "skydive/skydive-ui"
+    tag: "latest"
+  port: 8080
+  nodePort: 30083
+##################
 # env variables
 env: []

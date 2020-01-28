@@ -19,6 +19,11 @@ spec:
     name: "{{ template "fullname" . }}-etcd"
     nodePort: {{ .Values.etcd.nodePort }}
   {{- end }}
+  {{- if .Values.ui.deployment }}
+  - port: {{ .Values.ui.port }}
+    name: "{{ template "fullname" . }}-ui"
+    nodePort: {{ .Values.ui.nodePort }}
+  {{- end }}
   selector:
     app: {{ template "fullname" . }}
     tier: analyzer

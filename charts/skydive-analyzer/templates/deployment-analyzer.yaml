@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "fullname" . }}-analyzer
@@ -8,6 +8,9 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 spec:
+  selector:
+    matchLabels:
+      app: {{ template "fullname" . }}
   replicas: 1
   template:
     metadata:
@@ -71,7 +74,7 @@ spec:
         - name: SKYDIVE_STORAGE_ELASTICSEARCHTOPOLOGY_DRIVER
           value: "elasticsearch"
         - name: SKYDIVE_STORAGE_ELASTICSEARCHFLOW_HOST
-          value: {{ .Values.persistence.storage.elasticsearch.host }}:{{ .Values.persistence.storage.elasticsearch.port }}
+          value: {{ .Values.persistence.storage.elasticsearch.host }}:{{ .Values.persistence.storage.elasticsearch.port }}/{{ .Values.persistence.storage.elasticsearch.query }}
         - name: SKYDIVE_STORAGE_ELASTICSEARCHFLOW_INDICES_TO_KEEP
           value: {{ .Values.persistence.storage.flows.indicesToKeep | quote }}
         - name: SKYDIVE_STORAGE_ELASTICSEARCHFLOW_INDEX_ENTRIES_LIMIT
@@ -85,7 +88,7 @@ spec:
         - name: SKYDIVE_STORAGE_ELASTICSEARCHFLOW_RETRY
           value: "5"
         - name: SKYDIVE_STORAGE_ELASTICSEARCHTOPOLOGY_HOST
-          value: {{ .Values.persistence.storage.elasticsearch.host }}:{{ .Values.persistence.storage.elasticsearch.port }}
+          value: {{ .Values.persistence.storage.elasticsearch.host }}:{{ .Values.persistence.storage.elasticsearch.port }}/{{ .Values.persistence.storage.elasticsearch.query }}
         - name: SKYDIVE_STORAGE_ELASTICSEARCHTOPOLOGY_INDICES_TO_KEEP
           value: {{ .Values.persistence.storage.topology.indicesToKeep | quote }}
         - name: SKYDIVE_STORAGE_ELASTICSEARCHTOPOLOGY_INDEX_ENTRIES_LIMIT
@@ -144,7 +147,13 @@ spec:
         volumeMounts:
         - name: "{{ template "fullname" . }}-{{ .Values.persistence.dataVolume.name }}"
           mountPath: /usr/share/elasticsearch/data
-    {{- end }}      
+    {{- end }}
+    {{- if .Values.ui.deployment }}
+      - name: skydive-ui
+        image: {{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag }}
+        ports:
+           - containerPort: {{ .Values.ui.port }}
+    {{- end }}
       volumes:
     {{- if and .Values.persistence.enabled .Values.elasticsearch.deployment }}
       - name: "{{ template "fullname" . }}-{{ .Values.persistence.dataVolume.name }}"
