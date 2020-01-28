@@ -44,15 +44,13 @@ analyzer:
   topology:
     probes: ""
     fabric: "TOR1->*[Type=host]/eth0"
-  etcd:
-    listen: 0.0.0.0:12379
 
 ##################
 # Persistence
 persistence:
   ## Persistence disables by default
   enabled: false
-  useDynamicProvisioning: true
+  useDynamicProvisioning: false
   ## DataVolume for Persistence
   dataVolume:
     name: "datavolume"

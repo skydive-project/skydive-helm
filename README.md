@@ -50,31 +50,54 @@ The command removes all the Kubernetes components associated with the chart and 
 
 The chart can be customized using the following configuration parameters:
 
-| Parameter                            | Description                                     | Default                                                    |
-| ----------------------------------   | ---------------------------------------------   | ---------------------------------------------------------- |
-| `image.repository`                   | Skydive image repository                        | `ibmcom/skydive`                                           |
-| `image.tag`                          | Image tag                                       | `0.22.0`                                                   |
-| `image.secretName`                   | Image secret for private repository             | Empty                                                      |
-| `image.imagePullPolicy`              | Image pull policy                               | `IfNotPresent`                                             |
-| `resources`                          | CPU/Memory resource requests/limits             | Memory: `8192Mi`, CPU: `2000m`                             |
-| `service.name`                       | service name                                    | `skydive`                                                  |
-| `service.type`                       | k8s service type (e.g. NodePort, LoadBalancer)  | `NodePort`                                                 |
-| `service.port`                       | TCP port                                        | `8082`                                                     |
-| `etcd.port`                          | TCP port                                        | `12379`                                                     |
-| `analyzer.topology.fabric`           | Fabric connecting k8s nodes                     | `TOR1->*[Type=host]/eth0`                                  |
-| `env`                                | Extended environment variables                  | Empty                                                      |
-| `storage.elasticsearch.host`         | ElasticSearch host                              | `127.0.0.1`                                                |
-| `storage.elasticsearch.port`         | ElasticSearch port                              | `9200`                                                     |
-| `storage.flows.indicesToKeep`        | Number of flow indices to keep in storage       | `10`                                                       |
-| `storage.flows.indexEntriesLimit`    | Number of flow records to keep per index        | `10000`                                                    |
-| `storage.topology.indicesToKeep`     | Number of topology indices to keep in storage   | `10`                                                       |
-| `storage.topology.indexEntriesLimit` | Number of topology records to keep per index    | `10000`                                                    |
-| `persistence.enabled`                | Use a PVC to persist data                       | `false`                                                    |
-| `persistence.useDynamicProvisioning` | Specify a storageclass or leave empty           | `false`                                                    |
-| `dataVolume.name`                    | Name of the PVC to be created                   | `datavolume`                                               |
-| `dataVolume.existingClaimName`       | Provide an existing PersistentVolumeClaim       | `nil`                                                      |
-| `dataVolume.storageClassName`        | Storage class of backing PVC                    | `nil`                                                      |
-| `dataVolume.size`                    | Size of data volume                             | `10Gi`                                                     |
+| Parameter                                                             | Description                                       | Default                                   |
+| -------------------------------------------------------------------   | -----------------------------------------------   | ---------------------------------------   |
+| `deployment.agent`                                                    | Enable Skydive agent deployment                   | `true`                                    |
+| `deployment.analyzer`                                                 | Enable Skydive analyzer deployment                | `true`                                    |
+| `skydive-analyzer.nameOverride`                                       | Override `skydive-analyzer` subchart's name       | `skydive`                                 |                 
+| `skydive-analyzer.image.repository`                                   | Skydive image repository                          | `ibmcom/skydive`                          |
+| `skydive-analyzer.image.tag`                                          | Image tag                                         | `0.22.0`                                  |
+| `skydive-analyzer.image.secretName`                                   | Image secret for private repository               | Empty                                     |
+| `skydive-analyzer.image.imagePullPolicy`                              | Image pull policy                                 | `IfNotPresent`                            |
+| `skydive-analyzer.resources`                                          | CPU/Memory resource requests/limits               | Memory: `8192Mi`, CPU: `2000m`            |
+| `skydive-analyzer.service.name`                                       | service name                                      | `skydive`                                 |
+| `skydive-analyzer.service.type`                                       | k8s service type (e.g. NodePort, LoadBalancer)    | `NodePort`                                |
+| `skydive-analyzer.service.port`                                       | TCP port                                          | `8082`                                    |
+| `skydive-analyzer.service.nodePort`                                   | Exposed TCP port                                  | Empty                                     |
+| `skydive-analyzer.etcd.port`                                          | TCP port                                          | `12379`                                   |
+| `skydive-analyzer.etcd.expose`                                        | Control for setting up a service for ETCD         | `false`                                   |
+| `skydive-analyzer.analyzer.topology.fabric`                           | Fabric connecting k8s nodes                       | `TOR1->*[Type=host]/eth0`                 |
+| `skydive-analyzer.analyzer.topology.probes`                           | Deployed analyzer probes                          | `nil`                                     |
+| `skydive-analyzer.persistence.enabled`                                | Use a PVC to persist data                         | `false`                                   |
+| `skydive-analyzer.persistence.useDynamicProvisioning`                 | Specify a storageclass or leave empty             | `false`                                   |
+| `skydive-analyzer.persistence.dataVolume.name`                        | Name of the PVC to be created                     | `datavolume`                              |
+| `skydive-analyzer.persistence.dataVolume.existingClaimName`           | Provide an existing PersistentVolumeClaim         | `nil`                                     |
+| `skydive-analyzer.persistence.dataVolume.storageClassName`            | Storage class of backing PVC                      | `nil`                                     |
+| `skydive-analyzer.persistence.dataVolume.size`                        | Size of data volume                               | `10Gi`                                    |
+| `skydive-analyzer.persistence.storage.elasticsearch.host`             | ElasticSearch host                                | `127.0.0.1`                               |
+| `skydive-analyzer.persistence.storage.elasticsearch.port`             | ElasticSearch port                                | `9200`                                    |
+| `skydive-analyzer.persistence.storage.flows.indicesToKeep`            | Number of flow indices to keep in storage         | `10`                                      |
+| `skydive-analyzer.persistence.storage.flows.indexEntriesLimit`        | Number of flow records to keep per index          | `10000`                                   |
+| `skydive-analyzer.persistence.storage.topology.indicesToKeep`         | Number of topology indices to keep in storage     | `10`                                      |
+| `skydive-analyzer.persistence.storage.topology.indexEntriesLimit`     | Number of topology records to keep per index      | `10000`                                   |
+| `skydive-analyzer.elasticsearch.deployment`                           | Enable deployment of an elastic search            | `false`                                   |
+| `skydive-analyzer.elasticsearch.image.repository`                     | Elasticsearch image repository                    | `elastic/elasticsearch`                   |                                                           |
+| `skydive-analyzer.elasticsearch.image.tag`                            | Image tag                                         | `7.5.1`                                   |
+| `skydive-analyzer.elasticsearch.env`                                  | Elasticsearch environment variables               | ...                                       |
+| `skydive-analyzer.ui.deployment`                                      | Enable deployment of the Skydive new UI           | `true`                                    |
+| `skydive-analyzer.ui.image.repository`                                | Skydive UI image repository                       | `skydive/skydive-ui`                      |                                     |
+| `skydive-analyzer.ui.image.tag`                                       | Image tag                                         | `latest`                                  |
+| `skydive-analyzer.ui.port`                                            | TCP port                                          | `8080`                                    |
+| `skydive-analyzer.ui.nodePort`                                        | Exposed TCP port                                  | `30083`                                   |
+| `skydive-agent.nameOverride`                                          | Override `skydive-agent` subchart's name          | `skydive`                                 |
+| `skydive-agent.image.repository`                                      | Skydive image repository                          | `skydive/skydive`                         |
+| `skydive-agent.image.tag`                                             | Image tag                                         | `0.26.0`                                  |
+| `skydive-agent.image.secretName`                                      | Image secret for private repository               | Empty                                     |
+| `skydive-agent.image.imagePullPolicy`                                 | Image pull policy                                 | `IfNotPresent`                            |
+| `skydive-agent.resources`                                             | CPU/Memory resource requests/limits               | Memory: `8192Mi`, CPU: `2000m`            |
+| `skydive-agent.service.port`                                          | TCP port                                          | `8082`                                    |
+| `skydive-agent.topology.probes`                                       | Skydive agent probes                              | `ovsdb docker runc`                       |
+| `env`
 
 Specify parameters using `--set key=value[,key=value]` argument to `helm install`
 
