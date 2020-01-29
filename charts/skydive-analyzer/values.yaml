@@ -30,12 +30,14 @@ resources:
 service:
   name: skydive
   port: 8082
+  nodePort:
   type: NodePort
 
 ##################
 # ETCD variable
 etcd:
   port: 12379
+  nodePort:
   expose: false
 
 ##################
@@ -92,7 +94,7 @@ ui:
     repository: "skydive/skydive-ui"
     tag: "latest"
   port: 8080
-  nodePort: 30083
+  nodePort:
 ##################
 # env variables
 env: []

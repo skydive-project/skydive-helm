@@ -57,15 +57,16 @@ The chart can be customized using the following configuration parameters:
 | `skydive-analyzer.nameOverride`                                       | Override `skydive-analyzer` subchart's name       | `skydive`                                 |                 
 | `skydive-analyzer.image.repository`                                   | Skydive image repository                          | `ibmcom/skydive`                          |
 | `skydive-analyzer.image.tag`                                          | Image tag                                         | `0.22.0`                                  |
-| `skydive-analyzer.image.secretName`                                   | Image secret for private repository               | Empty                                     |
+| `skydive-analyzer.image.secretName`                                   | Image secret for private repository               | `nil`                                     |
 | `skydive-analyzer.image.imagePullPolicy`                              | Image pull policy                                 | `IfNotPresent`                            |
 | `skydive-analyzer.resources`                                          | CPU/Memory resource requests/limits               | Memory: `8192Mi`, CPU: `2000m`            |
 | `skydive-analyzer.service.name`                                       | service name                                      | `skydive`                                 |
 | `skydive-analyzer.service.type`                                       | k8s service type (e.g. NodePort, LoadBalancer)    | `NodePort`                                |
 | `skydive-analyzer.service.port`                                       | TCP port                                          | `8082`                                    |
-| `skydive-analyzer.service.nodePort`                                   | Exposed TCP port                                  | Empty                                     |
+| `skydive-analyzer.service.nodePort`                                   | Exposed TCP port                                  | `nil`                                     |
 | `skydive-analyzer.etcd.port`                                          | TCP port                                          | `12379`                                   |
 | `skydive-analyzer.etcd.expose`                                        | Control for setting up a service for ETCD         | `false`                                   |
+| `skydive-analyzer.etcd.nodePort`                                      | Exposed TCP port                                  | `nil`                                     |
 | `skydive-analyzer.analyzer.topology.fabric`                           | Fabric connecting k8s nodes                       | `TOR1->*[Type=host]/eth0`                 |
 | `skydive-analyzer.analyzer.topology.probes`                           | Deployed analyzer probes                          | `nil`                                     |
 | `skydive-analyzer.persistence.enabled`                                | Use a PVC to persist data                         | `false`                                   |
@@ -88,11 +89,11 @@ The chart can be customized using the following configuration parameters:
 | `skydive-analyzer.ui.image.repository`                                | Skydive UI image repository                       | `skydive/skydive-ui`                      |                                     |
 | `skydive-analyzer.ui.image.tag`                                       | Image tag                                         | `latest`                                  |
 | `skydive-analyzer.ui.port`                                            | TCP port                                          | `8080`                                    |
-| `skydive-analyzer.ui.nodePort`                                        | Exposed TCP port                                  | `30083`                                   |
+| `skydive-analyzer.ui.nodePort`                                        | Exposed TCP port                                  | `nil`                                   |
 | `skydive-agent.nameOverride`                                          | Override `skydive-agent` subchart's name          | `skydive`                                 |
 | `skydive-agent.image.repository`                                      | Skydive image repository                          | `skydive/skydive`                         |
 | `skydive-agent.image.tag`                                             | Image tag                                         | `0.26.0`                                  |
-| `skydive-agent.image.secretName`                                      | Image secret for private repository               | Empty                                     |
+| `skydive-agent.image.secretName`                                      | Image secret for private repository               | `nil`                                     |
 | `skydive-agent.image.imagePullPolicy`                                 | Image pull policy                                 | `IfNotPresent`                            |
 | `skydive-agent.resources`                                             | CPU/Memory resource requests/limits               | Memory: `8192Mi`, CPU: `2000m`            |
 | `skydive-agent.service.port`                                          | TCP port                                          | `8082`                                    |
